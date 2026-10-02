@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     private val metarRepo = com.aradsb.data.MetarRepository()
     @Volatile private var currentWeather: com.aradsb.data.MetarRepository.Weather? = null
     private val haptics by lazy { com.aradsb.ui.Haptics(this) }
+    private val updater by lazy { com.aradsb.update.AppUpdater(this) }
     // Small bitmaps drawn on the nearest markers; provider returns null for everything else.
     private val markerThumbs = java.util.Collections.synchronizedMap(HashMap<String, android.graphics.Bitmap>())
     private val thumbInFlight = java.util.Collections.synchronizedSet(HashSet<String>())
@@ -377,6 +378,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        checkForUpdate()
+
         if (hasPermissions()) {
             granted = true
             startEverything()
@@ -388,6 +391,35 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 )
             )
+        }
+    }
+
+    /** Once per launch: if GitHub has a newer release, offer it as a tappable pill under the status. */
+    private fun checkForUpdate() {
+        lifecycleScope.launch {
+            val release = updater.checkForUpdate() ?: return@launch
+            val offer = "Update available: v${release.versionName} — tap to install"
+            var busy = false
+            binding.updatePill.text = offer
+            binding.updatePill.visibility = View.VISIBLE
+            binding.updatePill.setOnClickListener {
+                if (busy) return@setOnClickListener
+                busy = true
+                lifecycleScope.launch {
+                    val error = updater.downloadAndInstall(release) { pct ->
+                        binding.updatePill.text =
+                            if (pct < 100) "Downloading update… $pct%" else "Installing update…"
+                    }
+                    // Only reached if the update did not replace the running app.
+                    busy = false
+                    binding.updatePill.text = offer
+                    if (error != null && error != "cancelled") {
+                        android.widget.Toast.makeText(
+                            this@MainActivity, "Update failed: $error", android.widget.Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
         }
     }
 

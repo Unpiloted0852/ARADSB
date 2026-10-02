@@ -20,8 +20,8 @@ android {
         applicationId = "com.aradsb"
         minSdk = 26          // CameraX + getVerticalAccuracyMeters() + good rotation-vector support
         targetSdk = 34
-        versionCode = 51
-        versionName = "1.30"
+        versionCode = 52
+        versionName = "1.31"
     }
 
     // The .tflite model must stay uncompressed in the APK so it can be memory-mapped.

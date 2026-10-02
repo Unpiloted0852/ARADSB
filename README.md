@@ -183,7 +183,23 @@ This is a standard Android Studio project (Kotlin DSL Gradle files).
 
 `CAMERA`, `ACCESS_FINE_LOCATION`, `ACCESS_COARSE_LOCATION`, `INTERNET`. The app requests
 camera and location at first launch. Approximate (coarse) location is accepted — the app
-still works, just with lower positional accuracy.
+still works, just with lower positional accuracy. `REQUEST_INSTALL_PACKAGES` and
+`UPDATE_PACKAGES_WITHOUT_USER_ACTION` are used only by the in-app updater below.
+
+### In-app updates
+
+At each launch the app asks the GitHub Releases API (keyless) for this repository's latest
+release. If its tag (e.g. `v1.31`) is newer than the installed `versionName`, an
+"Update available — tap to install" pill appears under the status line. One tap downloads
+the release's `.apk` asset straight into a `PackageInstaller` session and hands it to
+Android, which shows its own confirmation (and, the first time, the "allow installs from
+this app" setting and possibly a Play Protect prompt). The app closes when the update is
+applied; reopen it from the launcher.
+
+To ship an update: bump `versionCode` and `versionName`, build a release APK signed with the
+**same key**, and publish a GitHub release tagged `v<versionName>` with the APK attached.
+Debug builds are signed with a different key, so they see the pill but cannot install the
+update.
 
 ### Derived altitudes (EGM2008 and QNH)
 

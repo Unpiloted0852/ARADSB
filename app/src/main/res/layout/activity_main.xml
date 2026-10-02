@@ -56,6 +56,20 @@
             android:shadowDy="1"
             android:shadowRadius="3"
             android:visibility="gone" />
+
+        <!-- Shown when a newer release is published; tap to download and install it -->
+        <TextView
+            android:id="@+id/updatePill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_pill"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:textColor="#5AC8FA"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
     </LinearLayout>
 
     <!-- Settings (range / FOV) toggle -->
