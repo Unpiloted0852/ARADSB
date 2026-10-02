@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AR ADS-B</string>
+    <string name="perm_rationale">This app needs the camera (AR background) and precise location (to compute the bearing and elevation of each aircraft relative to you).</string>
+    <string name="attribution">Aircraft data \u00a9 adsb.lol contributors (ODbL 1.0)</string>
+</resources>

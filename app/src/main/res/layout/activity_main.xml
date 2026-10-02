@@ -1,0 +1,810 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true">
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:scaleType="fillCenter" />
+
+    <com.aradsb.ar.ArOverlayView
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Top scrim for legibility -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_gravity="top"
+        android:background="@drawable/scrim_top" />
+
+    <LinearLayout
+        android:id="@+id/topInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_margin="14dp"
+        android:layout_marginEnd="64dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="3"
+            android:text="Starting…" />
+
+        <TextView
+            android:id="@+id/alignText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="#5AC8FA"
+            android:textSize="12sp"
+            android:shadowColor="#000000"
+            android:shadowDx="0"
+            android:shadowDy="1"
+            android:shadowRadius="3"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- Settings (range / FOV) toggle -->
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="10dp"
+        android:background="@drawable/bg_pill"
+        android:contentDescription="Settings"
+        android:padding="9dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_settings" />
+
+    <!-- Collapsible controls panel -->
+    <LinearLayout
+        android:id="@+id/controlsPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_panel"
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/rangeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#5AC8FA"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:text="Range  ·  60 NM" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/rangeMinus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:minWidth="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="−" />
+
+            <SeekBar
+                android:id="@+id/rangeSeek"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:max="200"
+                android:progress="100" />
+
+            <Button
+                android:id="@+id/rangePlus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:minWidth="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="+" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="#5AC8FA"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:text="Field of view" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/fovMinus"
+                android:layout_width="48dp"
+                android:layout_height="44dp"
+                android:minWidth="0dp"
+                android:text="−" />
+
+            <TextView
+                android:id="@+id/fovText"
+                android:layout_width="64dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:text="66°" />
+
+            <Button
+                android:id="@+id/fovPlus"
+                android:layout_width="48dp"
+                android:layout_height="44dp"
+                android:minWidth="0dp"
+                android:text="+" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="#B0C4D4"
+            android:textSize="11sp"
+            android:text="Nudge FOV until markers line up with aircraft you can see. The angles are exact; this only calibrates the lens. Pinch the camera view to zoom in on distant traffic — markers spread to match." />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#22FFFFFF" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="#5AC8FA"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:text="Detection" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/alignSwitch"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:checked="true"
+            android:text="AI airplane detection"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#B0C4D4"
+            android:textSize="11sp"
+            android:text="A neural network (on-device, offline) finds aircraft in the camera image and draws boxes around them. For distant aircraft, a bright-dot detector boxes them near their ADS-B position." />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/autoTrimSwitch"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:checked="true"
+            android:text="Auto-trim compass from detections"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#B0C4D4"
+            android:textSize="11sp"
+            android:text="When a detected aircraft is confidently matched to its ADS-B position, the compass is fine-trimmed toward it (median of many sightings, capped at ±6°). An aircraft&#8217;s GPS position is a far better heading reference than any phone magnetometer." />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="#5AC8FA"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06"
+            android:text="Calibration" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/trueNorthSwitch"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:checked="true"
+            android:text="Compass shows true north"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="#8FA3B3"
+            android:textSize="11sp"
+            android:text="On = true north (geographic). Off = magnetic north (matches a magnetic compass and runway headings)." />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/gyroOnlySwitch"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:checked="false"
+            android:text="Gyro-only heading"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="#8FA3B3"
+            android:textSize="11sp"
+            android:text="For places with heavy magnetic interference: heading ignores the magnetometer entirely and is held by the gyroscope. Set the direction once with tap-and-hold calibration (aircraft detections keep fine-trimming it too). Gyro drift accumulates slowly — recalibrate now and then." />
+
+        <Button
+            android:id="@+id/helpCalibrate"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Help me calibrate" />
+
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="#8FA3B3"
+            android:textSize="11sp"
+            android:text="Tip: press and hold the horizon compass for 1.2 seconds to fine-tune it by hand against a bearing you know." />
+
+        <TextView
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="#6E8496"
+            android:textSize="10sp"
+            android:text="ARADSB 1.30 · data: adsb.lol / adsb.fi / airplanes.live / ADSB One · photos: planespotters · airport-data · adsbdb · wx: aviationweather.gov" />
+    </LinearLayout>
+
+    <!-- Data attribution -->
+    <TextView
+        android:id="@+id/attribution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="4dp"
+        android:textColor="#99FFFFFF"
+        android:textSize="10sp"
+        android:text="@string/attribution" />
+
+    <!-- Selected-aircraft detail card -->
+    <LinearLayout
+        android:id="@+id/detailCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="22dp"
+        android:background="@drawable/bg_card"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone">
+
+        <!-- Affordance: tap or swipe up to expand -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="4dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:contentDescription="Expandable"
+                android:src="@drawable/ic_expand_up" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:letterSpacing="0.03"
+                android:text="Tap or swipe up for full details"
+                android:textColor="#9FB4C4"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/cloudNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="☁  May be hidden by clouds"
+            android:textColor="#FFC979"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/audibleNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="🔊  You can probably hear this aircraft right now"
+            android:textColor="#A9D8FF"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/acPhoto"
+                android:layout_width="116dp"
+                android:layout_height="78dp"
+                android:background="@drawable/bg_photo"
+                android:contentDescription="Aircraft photo"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/acCallsign"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="19sp"
+                    android:textStyle="bold"
+                    android:text="—" />
+
+                <TextView
+                    android:id="@+id/acType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#CFE0EC"
+                    android:textSize="12sp" />
+
+
+                <TextView
+                    android:id="@+id/acStatsA"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/acStatsB"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/acCredit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="#8FA6B6"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Expanded detail sheet (swipe up on the card to reveal) -->
+    <FrameLayout
+        android:id="@+id/expandedPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="52dp"
+        android:background="@drawable/bg_sheet"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Grabber / drag-down-to-close area -->
+            <FrameLayout
+                android:id="@+id/expHandleTouch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:paddingBottom="6dp">
+
+                <View
+                    android:layout_width="42dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/bg_handle" />
+
+                <ImageButton
+                    android:id="@+id/expClose"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="6dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Close"
+                    android:padding="9dp"
+                    android:src="@drawable/ic_close" />
+            </FrameLayout>
+
+            <!-- Header: photo + identity -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/expPhoto"
+                    android:layout_width="132dp"
+                    android:layout_height="88dp"
+                    android:background="@drawable/bg_photo"
+                    android:contentDescription="Aircraft photo"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/expCallsign"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/expType"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#CFE0EC"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/expCredit"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textColor="#8FA6B6"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/expLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:padding="2dp"
+                        android:textColor="#5AC8FA"
+                        android:textSize="12sp"
+                        android:text="View on Planespotters \u2197" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#22FFFFFF" />
+
+            <ScrollView
+                android:id="@+id/expScroll"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:id="@+id/expContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="28dp" />
+            </ScrollView>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- One-time first-run hint (dismiss persists) -->
+    <LinearLayout
+        android:id="@+id/hintOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#B302060C"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✈"
+            android:textColor="#5AC8FA"
+            android:textSize="44sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Point your phone at the sky"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="3dp"
+            android:text="Live aircraft appear as markers where they really are. Centre one in the reticle for details, swipe its card up for everything it transmits. The AI looks through your camera and boxes aircraft it can see."
+            android:textColor="#CFE0EC"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/hintDismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Got it" />
+    </LinearLayout>
+
+    <!-- Guided calibration (opened from settings: Help me calibrate) -->
+    <LinearLayout
+        android:id="@+id/calibGuideOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#D902060C"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="28dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/calibGuideStep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Step 1 of 2"
+            android:textColor="#5AC8FA"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.08" />
+
+        <TextView
+            android:id="@+id/calibGuideTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="Calibrate the compass"
+            android:textColor="#FFFFFF"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/calibGuideBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:lineSpacingExtra="3dp"
+            android:text=""
+            android:textColor="#CFE0EC"
+            android:textSize="14sp" />
+
+        <com.aradsb.ar.CalibrationView
+            android:id="@+id/calibGuideFigure"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/calibGuideStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text=""
+            android:textColor="#FFC83C"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/calibGuideClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="14dp"
+                android:text="Close" />
+
+            <Button
+                android:id="@+id/calibGuideNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Manual compass calibration bar (shown after a 1.2-second hold on the horizon compass) -->
+    <LinearLayout
+        android:id="@+id/calibBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="#E6201008"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Calibration mode"
+            android:textColor="#FFA53C"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06" />
+
+        <TextView
+            android:id="@+id/calibBarValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:lineSpacingExtra="2dp"
+            android:text="Drag the orange compass sideways until a marking sits on a bearing you know. Offset 0.0°"
+            android:textColor="#F0D8C0"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/calibReset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="14dp"
+                android:text="Reset" />
+
+            <Button
+                android:id="@+id/calibDone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Done" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Compass calibration prompt (shown when the magnetometer is unreliable) -->
+    <LinearLayout
+        android:id="@+id/calibrationOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC02060C"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Compass needs calibrating"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="Move your phone through a figure-8 a few times, rotating your wrist as you go."
+            android:textColor="#CFE0EC"
+            android:textSize="14sp" />
+
+        <com.aradsb.ar.CalibrationView
+            android:id="@+id/calibrationView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/calibrationDismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dismiss" />
+    </LinearLayout>
+</FrameLayout>
