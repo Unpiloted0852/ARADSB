@@ -490,3 +490,5 @@ If you publish a build, set a real contact in the `User-Agent` string in
 
 This is a personal/hobby project provided as-is, with no warranty. Do not rely on it
 for navigation, separation, or any safety-of-flight purpose.
+
+Coffee: https://ko-fi.com/unpiloted0852
